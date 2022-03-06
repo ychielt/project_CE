@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+.collapsible {
+  background-color: #777;
+  color: white;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+.active, .collapsible:hover {
+  background-color: #555;
+}
+
+.content {
+  padding: 0 18px;
+  max-height: 0px;
+  overflow: hidden;
+  transition: max-height  0.2s;
+  background-color: #f1f1f1;
+}
+</style>
+</head>
+<body>
+
+<h2>Animated Collapsibles</h2>
+
+{% for i in d.items()%}
+<div>
+<p>Collapsible Set:</p>
+<button class="collapsible"><b class="icon"> > </b> {{i[0]}}</button>
+    {% for j in i[1] %}
+<div class="content">
+  <p>{{j}}</p>
+</div>
+{%endfor%}
+    </div>
+
+{%endfor%}
+
+
+<script>
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this;
+    while (content = content.nextElementSibling){
+    console.log(content)
+    if (content.style.maxHeight){
+      content.style.maxHeight = null;
+    } else {
+      content.style.maxHeight = content.scrollHeight + "px";
+    }
+}
+  });
+}
+</script>
+
+</body>
+</html>
