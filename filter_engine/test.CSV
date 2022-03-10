@@ -1,0 +1,8 @@
+﻿"Time of Day","Process Name","PID","Operation","Path","Result","Detail","Category"
+"18:17:20.1496213","Explorer.EXE","17088","SetRenameInformationFile","C:\syber_elite\llllllllll.exe","SUCCESS","ReplaceIfExists: False, FileName: C:\syber_elite\llllllllll.dll","Write"
+"18:12:59.1498741","Explorer.EXE","17088","SetRenameInformationFile","C:\syber_elite\‏‏‫מסמך טקסט ‫חדש.txt","SUCCESS","ReplaceIfExists: False, FileName: C:\syber_elite\uuuuuu.txt","Write"
+"18:13:05.6962355","Explorer.EXE","17088","SetRenameInformationFile","C:\syber_elite\uuuuuu.txt","SUCCESS","ReplaceIfExists: False, FileName: C:\syber_elite\llllllllll.txt","Write"
+"18:13:13.8149386","Explorer.EXE","17088","SetRenameInformationFile","C:\syber_elite\llllllllll.txt","SUCCESS","ReplaceIfExists: False, FileName: C:\syber_elite\llllllllll.exe","Write"
+"18:21:48.6254637","aswidsagent.exe","7668","SetRenameInformationFile","C:\Windows\Temp\asw-36480e35-27c3-4622-8759-b71773756266.tmp","SUCCESS","ReplaceIfExists: True, FileName: C:\ProgramData\Avast Software\Avast\IDS\malwareprofile\cache.dat","Write"
+"18:21:50.3103352","aswidsagent.exe","7668","SetRenameInformationFile","C:\Windows\Temp\asw-67200a26-1f4e-4838-bcab-a428d3904370.tmp","SUCCESS","ReplaceIfExists: True, FileName: C:\ProgramData\Avast Software\Avast\IDS\profile\globalLoadable.dat","Write"
+"18:22:12.2928979","FileCoAuth.exe","3036","SetRenameInformationFile","C:\Users\יחיאל\AppData\Local\Microsoft\OneDrive\logs\Common\FileCoAuth-2022-03-10.1622.3036.1.aodl","SUCCESS","ReplaceIfExists: False, FileName: C:\Users\יחיאל\AppData\Local\Microsoft\OneDrive\logs\Common\FileCoAuth-2022-03-10.1622.3036.1.odl","Write"
