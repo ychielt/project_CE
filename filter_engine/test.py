@@ -1,5 +1,5 @@
 import re
+from procmon_parser.consts import ProcessOperation
 
-s = "aabbcc.batddeeff.xe"
-if re.search("(\.exe|\.dll|\.bat)", s):
-    print("aa")
+
+print(ProcessOperation.Process_Create.name)

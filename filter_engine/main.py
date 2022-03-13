@@ -36,17 +36,17 @@ def process_filter(ev: Event):
 def file_system_filter(ev: Event):
     if ev.operation not in file_system_operation:
         return
-    if ev.operation == 'WriteFile':
+    if ev.operation == FilSystem.WriteFile:
         if re.search("(\.exe|\.dll|\.bat)", ev.path):
-            summary['WriteFile'].append(ev)
-    elif ev.operation == "CreateFile":
-        if re.search("(\.exe|\.bat)", ev.path):
-            summary['CreateFile'].append(ev)
+            summary[FilSystem.WriteFile].append(ev)
+    elif ev.operation == FilSystem.CreateFile:
+        if re.search("(\.bat)", ev.path):
+            summary[FilSystem.CreateFile].append(ev)
             created_files.append(str(ev.path).split("/")[-1])
-    elif ev.operation == "SetRenameInformationFile":
-        summary["SetRenameInformationFile"].append(ev)
-    elif ev.operation == "SetBasicInformationFile":
-        summary["SetBasicInformationFile"].append(ev)
+    elif ev.operation == FilSystem.SetRenameInformationFile:
+        summary[FilSystem.SetRenameInformationFile].append(ev)
+    elif ev.operation == FilSystem.SetBasicInformationFile:
+        summary[FilSystem.SetBasicInformationFile].append(ev)
 
 
 def registry_filter(ev: Event):
@@ -55,7 +55,7 @@ def registry_filter(ev: Event):
 
 
 def main():
-    f = open("test.PML", "rb")
+    f = open("thread_create.PML", "rb")
     pml_reader = ProcmonLogsReader(f)
     print(len(pml_reader))
 
@@ -65,6 +65,8 @@ def main():
                EventClass.Network: network_filter}
     ev: Event
     for ev in pml_reader:
+        print(ev.tid)
+        print(ev.details)
         if not is_relevant(ev):
             continue
         if ev.event_class != EventClass.Profiling:

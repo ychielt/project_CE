@@ -570,6 +570,10 @@ def get_filesystem_setdispositioninformation_details(io, metadata, event, detail
     else:
         event.details["Delete"] = "False"
 
+def get_SetRenameInformationFile_metadata_details(io, metadata, event, details_io, extra_detail_io):
+
+    pass
+
 
 FilesystemSubOperationHandler = {
     FilesystemOperation.CreateFile.name: get_filesystem_create_file_details,
@@ -583,6 +587,7 @@ FilesystemSubOperationHandler = {
     FilesystemQueryInformationOperation.QueryRemoteProtocolInformation.name: get_filesystem_read_metadata_details,
     FilesystemSetInformationOperation.SetDispositionInformationFile.name:
         get_filesystem_setdispositioninformation_details,
+    FilesystemSetInformationOperation.SetRenameInformationFile.name: get_SetRenameInformationFile_metadata_details,
 }
 
 

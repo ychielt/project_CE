@@ -1,30 +1,37 @@
-from procmon_parser.consts import ProcessOperation, FilesystemOperation, ProfilingOperation, NetworkOperation
+from procmon_parser.consts import FilesystemSetInformationOperation, ProcessOperation,\
+    FilesystemOperation, RegistryOperation, \
+    ProfilingOperation, NetworkOperation
 
 
 class Process():
-    Process_Create = 'Process_Create'
-    Load_Image = 'Load_Image'
+    Process_Create = ProcessOperation.Process_Create.name
+    Load_Image = ProcessOperation.Load_Image.name
 
 
 class FilSystem():
-    SetBasicInformationFile = 'SetBasicInformationFile'
-    SetRenameInformationFile = "SetRenameInformationFile"
+    SetBasicInformationFile = FilesystemSetInformationOperation.SetBasicInformationFile.name
+    SetRenameInformationFile = FilesystemSetInformationOperation.SetRenameInformationFile.name
+    CreateFile = FilesystemOperation.CreateFile.name
+    WriteFile = FilesystemOperation.WriteFile.name
 
 
 class Network():
     pass
 
+
 class Registry():
-    pass
+    RegSetValue = RegistryOperation.RegSetValue.name
+    RegSetInfoKey = RegistryOperation.RegSetInfoKey.name
+    RegDeleteKey = RegistryOperation.RegDeleteKey.name
+    RegDeleteValue = RegistryOperation.RegDeleteValue.name
 
+process_operation = [ProcessOperation.Process_Create.name,
+                     ProcessOperation.Load_Image.name]
 
-process_operation = [ProcessOperation.Process_Create,
-                        ProcessOperation.Load_Image]
-
-registry_operation = []
+registry_operation = [Registry.RegSetValue]
 network_operation = []
-file_system_operation = ["SetRenameInformationFile",
-                         "SetBasicInformationFile"]
+file_system_operation = [FilSystem.SetBasicInformationFile,
+                         FilSystem.SetRenameInformationFile]
 
 # operations = ["RegDeleteValue",
 #               "RegDeleteKey",
@@ -40,3 +47,5 @@ file_system_operation = ["SetRenameInformationFile",
 #               "SetBasicInformationFile"
 #               ]
 # network = ["TCP Connect", "TCP Receive", "UDP Send", "UDP Receive"]
+# CurrentControlSet\Services
+# Software\Microsoft\Windows\CurrentVersion\Run
