@@ -6,8 +6,9 @@ from filter_engine.parser import get_summary
 MAX_DISPLAYED_EVENTS = 10
 
 
-def display_report(summary):
+def display_report(summary, pname, pid):
     root = Tk()
+    root.title(f"report for process: '{pname}, {pid}'")
     root.geometry('1300x500+250+100')
     o = ScrollFrame(root)
     for s in summary.items():
@@ -18,6 +19,9 @@ def display_report(summary):
             if counter >= MAX_DISPLAYED_EVENTS:
                 break
             counter += 1
+            if counter == 2:
+                print()
+            print(counter)
             event = ToggledFrame(title.sub_frame, text=ev.process.process_name+',  '+str(ev.process.pid), relief="raised", borderwidth=0)
             event.pack(fill="x", expand=1, pady=0, anchor="n")
             Item('path', ev.path, event.sub_frame).pack(fill='x', side='top')   # path
@@ -31,10 +35,11 @@ def display_report(summary):
             process.pack(fill="x", expand=1, pady=0, anchor="n")
             for item in ev.process.__dict__.items():
                 if item[0] == 'modules':
-                    modules = ToggledFrame(process.sub_frame, text='modules', relief="raised", borderwidth=0)
-                    modules.pack(fill="x", expand=1, pady=0, anchor="n")
-                    for m in ev.process.modules:
-                        Item('', m, modules.sub_frame).pack(fill='x', side='top')
+                    pass
+                    # modules = ToggledFrame(process.sub_frame, text='modules', relief="raised", borderwidth=0)
+                    # modules.pack(fill="x", expand=1, pady=0, anchor="n")
+                    # for m in ev.process.modules:
+                    #     Item('', m, modules.sub_frame).pack(fill='x', side='top')
                 else:
                     Item(item[0], item[1], process.sub_frame).pack(fill='x', side='top')   # process attribute
     o.update()
@@ -58,7 +63,7 @@ def main():
                           args.partial_flow)
 
     #summary = get_summary("dll_inject_py.PML", False)
-    display_report(summary)
+    display_report(summary, args.process_name, args.process_id)
 
 
 if __name__ == '__main__':

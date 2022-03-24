@@ -1,3 +1,5 @@
+import time
+
 from filter_engine.data_layer import *
 from filter_engine.operations import *
 from filter_engine.GUI_util import *
@@ -7,6 +9,7 @@ from procmon_parser.consts import EventClass
 from procmon_parser.logs import Event
 from collections import defaultdict
 from procmon_parser.stream_logs_detail_format import set_parse_details
+import re
 
 
 IS_PARTIAL = False
@@ -45,12 +48,13 @@ def process_filter(ev: Event):
     elif ev.operation == ProcessOp.Load_Image:
         if ev.process.process_name not in pids.values() and ev.tid in suspicious_threads:
             summary["dll_injection"].append(ev)
+        if not ev.path.endswith('dll'):
+            summary["A file with an unusual extension was attempted to be loaded as a .DLL"].append(ev)
     elif ev.operation == ProcessOp.Process_Create:
         if "Command line" in ev.details and re.search("attrib", ev.details["Command line"]):
             summary["Uses suspicious Windows utilities"].append(ev)
         elif re.search("(cmd\.exe|powershell\.exe)", ev.process.command_line.lower()):
             summary["Create a suspicious process"].append(ev)
-        #print(ev.path.split('\\')[-1])
         process_name =ev.path.split('\\')[-1]
         pids[ev.details["PID"]] = process_name
         created_process.append(ev)
@@ -110,7 +114,7 @@ def registry_filter(ev: Event):
         pass
 
 
-def start_parsing(pml_reader, pb_win, pb):
+def start_parsing(pml_reader, pb_win=None, pb=None):
     filters = {EventClass.Process: process_filter,
                EventClass.Registry: registry_filter,
                EventClass.File_System: file_system_filter,
@@ -119,10 +123,13 @@ def start_parsing(pml_reader, pb_win, pb):
     i = 0
     pb_step = PROGRESS_BAR_LENGTH/len(pml_reader)
     for ev in pml_reader:
-        if ev.process.pid == PID:
+        if i == 2434137:
             print()
-        pb_win.update_idletasks()
-        pb['value'] += pb_step
+        if pb_win and pb:
+            pb_win.update_idletasks()
+            pb['value'] += pb_step
+            text = tk.StringVar()
+            text.set("Test")
         print('\r' + str(i), end='')
         i += 1
         if IS_PARTIAL:
@@ -136,7 +143,8 @@ def start_parsing(pml_reader, pb_win, pb):
             continue
         if ev.event_class != EventClass.Profiling:
             filters[ev.event_class](ev)
-    pb_win.destroy()
+    if pb_win and pb:
+        pb_win.destroy()
 
 
 def get_summary(pml_file, proc_name, pid=0, tid=0, parse_rename_details=False, is_partial=False):
@@ -152,8 +160,8 @@ def get_summary(pml_file, proc_name, pid=0, tid=0, parse_rename_details=False, i
     f = open(pml_file, "rb")
     pml_reader = ProcmonLogsReader(f)
     print(len(pml_reader))
-
-    start_action_with_progress_bar(start_parsing, pml_reader)
+    start_parsing(pml_reader)
+    #start_action_with_progress_bar(start_parsing, pml_reader)
     return summary
     # print()
     # print(pids)

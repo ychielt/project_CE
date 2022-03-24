@@ -13,7 +13,7 @@ class Item(tk.Frame):
         tk.Frame.__init__(self, parent, *args, **options)
         self.pack(fill='x', side='top')
         if key:
-            ttk.Label(self, text=key, background='#bfbfbf', width=10).pack(side='left')
+            ttk.Label(self, text=key, background='#bfbfbf', width=15).pack(side='left')
         ttk.Label(self, text=val).pack(side='left')
 
 
