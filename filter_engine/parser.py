@@ -51,11 +51,13 @@ def process_filter(ev: Event):
         if not ev.path.endswith('dll'):
             summary["A file with an unusual extension was attempted to be loaded as a .DLL"].append(ev)
     elif ev.operation == ProcessOp.Process_Create:
-        if "Command line" in ev.details and re.search("attrib", ev.details["Command line"]):
-            summary["Uses suspicious Windows utilities"].append(ev)
+        if "Command line" in ev.details and re.search("attrib|vssadmin|icacls", ev.details["Command line"]):
+            summary["Uses suspicious Command line tools or Windows utilities"].append(ev)
         elif re.search("(cmd\.exe|powershell\.exe)", ev.process.command_line.lower()):
             summary["Create a suspicious process"].append(ev)
-        process_name =ev.path.split('\\')[-1]
+        elif re.search("delete shadows", ev.process.command_line.lower()):
+            summary["Removes the Shadow Copy to avoid recovery of the system"].append(ev)
+        process_name = ev.path.split('\\')[-1]
         pids[ev.details["PID"]] = process_name
         created_process.append(ev)
 
@@ -67,11 +69,19 @@ def file_system_filter(ev: Event):
         if re.search(EXECUTABLE_FILES_EXTENTIONS, ev.path.lower()):
             summary[FilSystem.WriteFile].append(ev)
             created_files.append(str(ev.path).split("/")[-1])
-        if re.search("\.lnk", ev.path.lower()):
-            summary["Create a shortcut to an executable file"].append(ev)
+            if re.search("\.lnk", ev.path.lower()):
+                summary["Create a shortcut to an executable file"].append(ev)
+        elif re.search(STARTUP_FOLDER_PATH, ev.path):
+            summary["Write Itself for autorun at Windows startup"].append(ev)
+        elif re.search("\.crt|\.pem|\.cer", ev.path):
+            summary["Attempts to create or modify system certificates"].append(ev)
+        elif re.search(OFFICE_FILE_EXTENTIONS, ev.path.lower()):
+            summary["Creates office documents om filesystem "].append(ev)
     elif ev.operation == FilSystem.CreateFile:
         if ev.path.split("\\")[-1].lower().startswith(DETECT_VIRTUAL_MACHINE):
             summary["Detect virtual machine through installed driver"].append(ev)
+        elif re.search(STARTUP_FOLDER_PATH, ev.path):
+            summary["Engaging in startup folder"].append(ev)
     elif ev.operation == FilSystem.SetRenameInformationFile:
         if "FileName" in ev.details.keys():
             if re.search(EXECUTABLE_FILES_EXTENTIONS, ev.details["FileName"].lower()):
@@ -97,9 +107,10 @@ def registry_filter(ev: Event):
             if re.search(path, ev.path):
                 summary["Write Itself for autorun at Windows startup"].append(ev)
                 break
-
         if re.search("CurrentVersion\\\\Internet Settings\\\\Wpad", ev.path):
             summary["Sets or modifies Wpad proxy auto configuration file for traffic interception"].append(ev)
+        if re.search("SystemCertificates\\\\AuthRoot\\\\Certificates", ev.path):
+            summary["Attempts to create or modify system certificates"].append(ev)
         elif re.search(BACKGROUND_REG_PATH, ev.path):
             summary["Modify desktop wallpaper"].append(ev)
     elif ev.operation == Registry.RegQueryValue or ev.operation == Registry.RegQueryKey:
@@ -163,15 +174,6 @@ def get_summary(pml_file, proc_name, pid=0, tid=0, parse_rename_details=False, i
     start_parsing(pml_reader)
     #start_action_with_progress_bar(start_parsing, pml_reader)
     return summary
-    # print()
-    # print(pids)
-    # print(created_process)
-    # print(created_files)
-    # for sum in summary.items():
-    #     print(sum[0])
-    #     for j in sum[1]:
-    #         print(j)
-    # with open("summary.json",'w') as f:
-    #     f.write(json.dumps(summary))
+
 
 
