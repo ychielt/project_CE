@@ -5,7 +5,7 @@ from filter_engine.parser import get_summary
 
 MAX_DISPLAYED_EVENTS = 10
 
- 
+
 def display_report(summary):
     root = Tk()
     root.geometry('1300x500+250+100')
