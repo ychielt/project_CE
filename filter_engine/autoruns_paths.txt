@@ -1,0 +1,163 @@
+SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce
+SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnceEx
+SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer\Run
+SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Run
+SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\RunOnce
+SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\RunOnceEx
+Install\Software\Microsoft\Windows\CurrentVersion\RunOnce
+Install\Software\Microsoft\Windows\CurrentVersion\RunOnceEx
+Install\Software\Microsoft\Windows\CurrentVersion\Run
+autoruns.software\classes\
+System\CurrentControlSet\Services
+System\CurrentControlSet\Control\Session Manager\KnownDlls
+System\CurrentControlSet\Control\SafeBoot\AlternateShell
+System\CurrentControlSet\Control\Session Manager\AppCertDlls
+System\CurrentControlSet\Control\Session Manager
+System\CurrentControlSet\Control\Terminal Server\Wds\rdpwd
+SYSTEM\CurrentControlSet\Control\SafeBoot
+System\CurrentControlSet\Control\SafeBoot\Option
+SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp
+SYSTEM\CurrentControlSet\Control\SecurityProviders
+SYSTEM\CurrentControlSet\Control\Lsa
+SYSTEM\CurrentControlSet\Control\Lsa\OSConfig
+System\CurrentControlSet\Services\WinSock2\Parameters\Protocol_Catalog9\Catalog_Entries
+SOFTWARE\Microsoft\Active Setup\Installed Components
+SOFTWARE\Wow6432Node\Microsoft\Active Setup\Installed Components
+System\CurrentControlSet\Services\WinSock2\Parameters\NameSpace_Catalog5\Catalog_Entries
+System\CurrentControlSet\Services\WinSock2\Parameters\Protocol_Catalog9\Catalog_Entries64
+System\CurrentControlSet\Services\WinSock2\Parameters\NameSpace_Catalog5\Catalog_Entries64
+SYSTEM\CurrentControlSet\Control\NetworkProvider\Order
+SYSTEM\CurrentControlSet\Control\Print\Environments\
+System\CurrentControlSet\Control\Print\Monitors
+System\CurrentControlSet\Control\Print\Providers
+System\CurrentControlSet\Control\BootVerificationProgram
+Software\Microsoft\Windows\CurrentVersion\Group Policy\Scripts\Startup
+Software\Policies\Microsoft\Windows\System\Scripts\Startup
+SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList
+Software\Sysinternals\
+\System32\ntdll.dll
+Software\Microsoft\windows nt\currentversion
+Software\Microsoft\Windows NT\CurrentVersion\Server\ServerLevels
+Software\Sysinternals
+SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows
+SOFTWARE\Wow6432Node\Microsoft\Windows NT\CurrentVersion\Windows
+Software\Wow6432Node\Classes\CLSID\
+Software\Classes\CLSID\
+Software\Microsoft\Windows NT\CurrentVersion\Drivers32
+Software\Classes\Filter
+Software\Wow6432Node\Microsoft\Windows NT\CurrentVersion\Drivers32
+Software\Wow6432Node\Classes\Filter
+Software\Policies\Microsoft\Windows\System\Scripts\Logon
+Software\Policies\Microsoft\Windows\System\Scripts\Logoff
+Software\Microsoft\Windows\CurrentVersion\Group Policy\Scripts\Logon
+Software\Microsoft\Windows\CurrentVersion\Group Policy\Scripts\Logoff
+Software\Microsoft\Windows\CurrentVersion\Group Policy\Scripts\Shutdown
+Software\Policies\Microsoft\Windows\System\Scripts\Shutdown
+Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders
+SOFTWARE\Microsoft\Windows NT\CurrentVersion\Terminal Server\
+Software\Microsoft\Windows\CurrentVersion\Policies\System
+SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon
+Software\Microsoft\Windows NT\CurrentVersion\Windows
+Software\Microsoft\Windows NT\CurrentVersion\Winlogon
+Software\Microsoft\Windows NT\CurrentVersion\Winlogon\AlternateShells\AvailableShells
+SOFTWARE\Microsoft\Windows CE Services\AutoStartOnConnect
+SOFTWARE\Microsoft\Windows CE Services\AutoStartDisconnect
+SOFTWARE\Wow6432Node\Microsoft\Windows CE Services\AutoStartOnConnect
+SOFTWARE\Wow6432Node\Microsoft\Windows CE Services\AutoStartOnDisconnect
+SOFTWARE\Microsoft\Windows NT\CurrentVersion\Font Drivers
+SOFTWARE\Classes\Protocols\Filter
+SOFTWARE\Classes\Protocols\Handler
+SOFTWARE\Microsoft\Internet Explorer\Desktop\Components
+Software\Classes\*\ShellEx\ContextMenuHandlers
+Software\Classes\Drive\ShellEx\ContextMenuHandlers
+Software\Classes\*\ShellEx\PropertySheetHandlers
+Software\Classes\AllFileSystemObjects\ShellEx\ContextMenuHandlers
+Software\Classes\AllFileSystemObjects\ShellEx\DragDropHandlers
+Software\Classes\AllFileSystemObjects\ShellEx\PropertySheetHandlers
+Software\Classes\Directory\ShellEx\ContextMenuHandlers
+Software\Classes\Directory\ShellEx\DragDropHandlers
+Software\Classes\Directory\ShellEx\PropertySheetHandlers
+Software\Classes\Directory\ShellEx\CopyHookHandlers
+Software\Classes\Directory\Background\ShellEx\ContextMenuHandlers
+Software\Classes\Folder\ShellEx\ContextMenuHandlers
+Software\Classes\Folder\ShellEx\DragDropHandlers
+Software\Classes\Folder\ShellEx\PropertySheetHandlers
+Software\Classes\Folder\ShellEx\ColumnHandlers
+Software\Classes\Folder\ShellEx\ExtShellFolderViews
+Software\Microsoft\Windows\CurrentVersion\Explorer\ShellIconOverlayIdentifiers
+SOFTWARE\Microsoft\Windows\CurrentVersion\ShellServiceObjectDelayLoad
+Software\Classes\CLSID\{AB8902B4-09CA-4bb6-B78D-A8F59079A8D5}
+Software\Microsoft\Ctf\LangBarAddin
+SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\ShellServiceObjects
+SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SharedTaskScheduler
+Software\Microsoft\Windows\CurrentVersion\Explorer\ShellExecuteHooks
+SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\SharedTaskScheduler
+Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\ShellExecuteHooks
+SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\ShellServiceObjects
+Software\Wow6432Node\Classes\*\ShellEx\ContextMenuHandlers
+Software\Wow6432Node\Classes\Drive\ShellEx\ContextMenuHandlers
+Software\Wow6432Node\Classes\*\ShellEx\PropertySheetHandlers
+Software\Wow6432Node\Classes\AllFileSystemObjects\ShellEx\ContextMenuHandlers
+Software\Wow6432Node\Classes\AllFileSystemObjects\ShellEx\DragDropHandlers
+Software\Wow6432Node\Classes\AllFileSystemObjects\ShellEx\PropertySheetHandlers
+Software\Wow6432Node\Classes\Directory\ShellEx\ContextMenuHandlers
+Software\Wow6432Node\Classes\Directory\ShellEx\DragDropHandlers
+Software\Wow6432Node\Classes\Directory\ShellEx\PropertySheetHandlers
+Software\Wow6432Node\Classes\Directory\ShellEx\CopyHookHandlers
+Software\Wow6432Node\Classes\Directory\Background\ShellEx\ContextMenuHandlers
+Software\Wow6432Node\Classes\Folder\ShellEx\ContextMenuHandlers
+Software\Wow6432Node\Classes\Folder\ShellEx\DragDropHandlers
+Software\Wow6432Node\Classes\Folder\ShellEx\PropertySheetHandlers
+Software\Wow6432Node\Classes\Folder\ShellEx\ColumnHandlers
+Software\Wow6432Node\Classes\Folder\ShellEx\ExtShellFolderViews
+Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\ShellIconOverlayIdentifiers
+SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\ShellServiceObjectDelayLoad
+Software\Wow6432Node\Microsoft\Ctf\LangBarAddin
+Software\Microsoft\Command Processor
+SOFTWARE\Classes\Exefile\Shell\Open\Command
+SOFTWARE\Classes\Htmlfile\Shell\Open\Command
+Software\Classes\.exe
+Software\Classes\.cmd
+Software\Microsoft\Windows NT\CurrentVersion\Image File Execution Options
+Software\Wow6432Node\Microsoft\Command Processor
+Software\Wow6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options
+Software\Classes\
+Software\Microsoft\Internet Explorer\UrlSearchHooks
+Software\Microsoft\Internet Explorer\Explorer Bars
+Software\Microsoft\Internet Explorer\Extensions
+Software\Wow6432Node\Microsoft\Internet Explorer\Explorer Bars
+Software\Wow6432Node\Microsoft\Internet Explorer\Extensions
+Software\Microsoft\Internet Explorer\Toolbar
+Software\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects
+Software\Wow6432Node\Microsoft\Internet Explorer\Toolbar
+Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects
+Software\Microsoft\Office\
+SOFTWARE\Microsoft\Office test\Special\Perf
+Software\Wow6432Node\Microsoft\Office\
+SOFTWARE\Wow6432Node\Microsoft\Office test\Special\Perf
+SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop
+SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\Credential Providers
+SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\Credential Provider Filters
+SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\PLAP Providers
+SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\GpExtensions
+Microsoft\Windows\CurrentVersion
+Microsoft\Windows NT\CurrentVersion
+CurrentControlSet\Control\Session Manager\Environment
+\system32\config\system
+\system32\config\software
+\drivers\acpi.sys
+minkernel\crts\ucrt\inc\
+\VarFileInfo\Translation
+\Microsoft\Windows Defender\
+\shell\open\command
+vtapi/v2/file/scan
+vtapi/v2/file/report
+\NetworkProvider
+\spool\Prtprocs\
+Control Panel\Desktop
+\sysnative\rundll32.exe
+minkernel\crts\ucrt\inc\corecrt_internal_strtox.h
+ROOT\subscription
+\AutorunsDisabled

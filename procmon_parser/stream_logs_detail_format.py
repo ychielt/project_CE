@@ -570,9 +570,27 @@ def get_filesystem_setdispositioninformation_details(io, metadata, event, detail
     else:
         event.details["Delete"] = "False"
 
-def get_SetRenameInformationFile_metadata_details(io, metadata, event, details_io, extra_detail_io):
 
-    pass
+parse_details = False
+def get_SetRenameInformationFile_metadata_details(io, metadata, event, details_io, extra_detail_io):
+    if parse_details:
+        ReplaceIfExists = bool(read_u8(io))
+        event.details["ReplaceIfExists"] = ReplaceIfExists
+        flag = read_u8(io)
+        text = ''
+        while True:
+            length = flag
+            flag = read_u8(io)
+            if flag == 128:
+                for i in range(length):
+                    text += chr(read_u8(io))
+                    event.details["FileName"] = text
+                break
+
+
+def set_parse_details(flag):
+    global parse_details
+    parse_details = flag
 
 
 FilesystemSubOperationHandler = {
