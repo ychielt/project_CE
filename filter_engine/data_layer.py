@@ -4,6 +4,6 @@ file = open("autoruns_paths.txt", 'r')
 autoruns_paths = file.readlines()
 PATH_TO_APP_INFO = "CurrentVersion\\\\Uninstall"
 EXECUTABLE_FILES_EXTENTIONS = "(\.exe|\.dll|\.bat|\.vbs|\.pyc|\.py|\.js|\.lnk)"
-BACKGROUND_REG_PATH = "Control Panel\\\\Desktop\\\\Wallpaper"
+BACKGROUND_REG_PATH = "Control Panel\\\\Desktop"
 OFFICE_FILE_EXTENTIONS = "(\.doc|\.docm|\.docx|\.pdf|\.ppt|\.ppts|\.pptx|\.xlm|\.xlsm)"
 STARTUP_FOLDER_PATH = "AppData\\\\Roaming\\\\Microsoft\\\\Windows\\\\Start Menu\\\\Programs\\\\Startup"
