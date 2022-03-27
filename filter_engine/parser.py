@@ -47,15 +47,15 @@ def process_filter(ev: Event):
             tids.add(ThreadInfo(ev.details["Thread ID"], ev.process.process_name))
     elif ev.operation == ProcessOp.Load_Image:
         if ev.process.process_name not in pids.values() and ev.tid in suspicious_threads:
-            summary["dll_injection"].append(ev)
+            summary["Inject DLL into another process through RemoteThread"].append(ev)
         if not ev.path.endswith('dll'):
             summary["A file with an unusual extension was attempted to be loaded as a .DLL"].append(ev)
     elif ev.operation == ProcessOp.Process_Create:
-        if "Command line" in ev.details and re.search("attrib|vssadmin|icacls", ev.details["Command line"]):
+        if "Command line" in ev.details and re.search("attrib|vssadmin|icacls", ev.details["Command line"], re.IGNORECASE):
             summary["Uses suspicious Command line tools or Windows utilities"].append(ev)
-        elif re.search("(cmd\.exe|powershell\.exe)", ev.process.command_line.lower()):
+        elif re.search("(cmd\.exe|powershell\.exe)", ev.process.command_line, re.IGNORECASE):
             summary["Create a suspicious process"].append(ev)
-        elif re.search("delete shadows", ev.process.command_line.lower()):
+        elif re.search("delete shadows", ev.process.command_line, re.IGNORECASE):
             summary["Removes the Shadow Copy to avoid recovery of the system"].append(ev)
         process_name = ev.path.split('\\')[-1]
         pids[ev.details["PID"]] = process_name
@@ -66,25 +66,25 @@ def file_system_filter(ev: Event):
     if ev.operation not in file_system_operation:
         return
     if ev.operation == FilSystem.WriteFile:
-        if re.search(EXECUTABLE_FILES_EXTENTIONS, ev.path.lower()):
+        if re.search(EXECUTABLE_FILES_EXTENTIONS, ev.path, re.IGNORECASE):
             summary[FilSystem.WriteFile].append(ev)
             created_files.append(str(ev.path).split("/")[-1])
-            if re.search("\.lnk", ev.path.lower()):
+            if re.search("\.lnk", ev.path, re.IGNORECASE):
                 summary["Create a shortcut to an executable file"].append(ev)
-        elif re.search(STARTUP_FOLDER_PATH, ev.path):
+        elif re.search(STARTUP_FOLDER_PATH, ev.path, re.IGNORECASE):
             summary["Write Itself for autorun at Windows startup"].append(ev)
-        elif re.search("\.crt|\.pem|\.cer", ev.path):
+        elif ev.path.lower().endswith((".crt",".pem",".cer")):
             summary["Attempts to create or modify system certificates"].append(ev)
-        elif re.search(OFFICE_FILE_EXTENTIONS, ev.path.lower()):
-            summary["Creates office documents om filesystem "].append(ev)
+        elif re.search(OFFICE_FILE_EXTENTIONS, ev.path, re.IGNORECASE):
+            summary["Creates office documents on filesystem "].append(ev)
     elif ev.operation == FilSystem.CreateFile:
         if ev.path.split("\\")[-1].lower().startswith(DETECT_VIRTUAL_MACHINE):
             summary["Detect virtual machine through installed driver"].append(ev)
-        elif re.search(STARTUP_FOLDER_PATH, ev.path):
+        elif re.search(STARTUP_FOLDER_PATH, ev.path, re.IGNORECASE):
             summary["Engaging in startup folder"].append(ev)
     elif ev.operation == FilSystem.SetRenameInformationFile:
         if "FileName" in ev.details.keys():
-            if re.search(EXECUTABLE_FILES_EXTENTIONS, ev.details["FileName"].lower()):
+            if re.search(EXECUTABLE_FILES_EXTENTIONS, ev.details["FileName"], re.IGNORECASE):
                 created_files.append(str(ev.path).split("/")[-1])
         summary[FilSystem.SetRenameInformationFile].append(ev)
     elif ev.operation == FilSystem.SetBasicInformationFile:
@@ -95,26 +95,31 @@ def registry_filter(ev: Event):
     if ev.operation not in registry_operation:
         return
     if ev.operation == Registry.RegOpenKey:
-        if re.search(PATH_TO_APP_INFO, ev.path):
+        if re.search(PATH_TO_APP_INFO, ev.path, re.IGNORECASE):
             summary["Query for potentially installed applications"].append(ev)
         registry_name = str(ev.path).split("\\")[-1]
-        if registry_name.lower().startswith(DETECT_VIRTUAL_MACHINE) or re.search("(vmware|virtualvbox)", str(ev.path).lower()):
+        if registry_name.lower().startswith(DETECT_VIRTUAL_MACHINE) or re.search("(vmware|virtualvbox)", ev.path, re.IGNORECASE):
             summary["Detect virtual machine through the presence of a registry key"].append(ev)
         elif registry_name.lower().startswith(SNIFFER):
             summary["Detect if any sniffer or debugger is installed"].append(ev)
     elif ev.operation == Registry.RegSetValue or ev.operation == Registry.RegCreateKey:
-        for path in autoruns_paths:
-            if re.search(path, ev.path):
-                summary["Write Itself for autorun at Windows startup"].append(ev)
-                break
-        if re.search("CurrentVersion\\\\Internet Settings\\\\Wpad", ev.path):
+        if re.search("CurrentVersion\\\\Internet Settings\\\\Wpad", ev.path, re.IGNORECASE):
             summary["Sets or modifies Wpad proxy auto configuration file for traffic interception"].append(ev)
-        if re.search("SystemCertificates\\\\AuthRoot\\\\Certificates", ev.path):
+        elif re.search("SystemCertificates\\\\AuthRoot\\\\Certificates", ev.path, re.IGNORECASE):
             summary["Attempts to create or modify system certificates"].append(ev)
-        elif re.search(BACKGROUND_REG_PATH, ev.path):
+        elif re.search(BACKGROUND_REG_PATH, ev.path, re.IGNORECASE):
             summary["Modify desktop wallpaper"].append(ev)
+        elif re.search("CurrentVersion\\\\Windows\\\\LoadAppInit_DLLs", ev.path, re.IGNORECASE) and "Data" in ev.details and ev.details["Data"] != 0:
+            summary["Enable user32.dll to load all DLL's list from registry - High risk for DLL-injection"].append(ev)
+        elif re.search("(CurrentVersion\\\\Windows\\\\AppInit_DLLs|Control\\\\Session Manager\\\\AppCertDLLs, re.IGNORECASE)", ev.path, re.IGNORECASE):
+            summary["Adding a DLL to be loaded persistently for most process in the system"].append(ev)
+        else:
+            for path in autoruns_paths:
+                if re.search(path, ev.path, re.IGNORECASE):
+                    summary["Write Itself for autorun at Windows startup"].append(ev)
+                    break
     elif ev.operation == Registry.RegQueryValue or ev.operation == Registry.RegQueryKey:
-        if re.search(PATH_TO_APP_INFO, ev.path):
+        if re.search(PATH_TO_APP_INFO, ev.path, re.IGNORECASE):
             summary["Collects information about installed application"].append(ev)
     elif ev.operation == Registry.RegDeleteKey:
         summary[Registry.RegDeleteKey].append(ev)

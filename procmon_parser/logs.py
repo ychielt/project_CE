@@ -80,6 +80,11 @@ class Process(object):
         self.end_time = end_time
         self.modules = modules or []
 
+    def compare(self, other):
+        if type(other) is type(self):
+            return self.pid == other.pid and self.command_line == other.command_line
+        return False
+
     def __eq__(self, other):
         if type(other) is type(self):
             return self.__dict__ == other.__dict__
@@ -115,6 +120,14 @@ class Event(object):
         self.category = category
         self.path = path
         self.details = details
+
+    def compare(self, other):
+        if type(other) is type(self):
+            return other.process == self.process \
+                   and other.path == self.path \
+                   and other.operation == self.operation \
+                   and other.details == self.details \
+                   and other.result == self.result
 
     def __eq__(self, other):
         if type(other) is type(self):

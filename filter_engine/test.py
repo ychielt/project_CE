@@ -14,12 +14,7 @@
 #         print(item)
 #     else:
 #         print(item[1].__dict__)
-def f(a,b,c):
-    print(a)
-    print(b)
-    print(c)
-
-def g(action, *args):
-    action(*args)
-
-g(f, *["x", "y", "z"])
+import re
+a={"a":1}
+b={"a":1}
+print(a==b)
