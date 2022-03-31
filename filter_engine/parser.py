@@ -170,7 +170,7 @@ def start_parsing(pml_reader, pb_win=None, pb=None):
             pids[PID] = ev.process.process_name
         if IS_PARTIAL:
             if ev.process.pid == PID:
-                tids.add(ThreadInfo(ev.details["Thread ID"], ev.process.process_name))
+                tids.add(ThreadInfo(ev.tid, ev.process.process_name))
         if not tids:
             if ev.operation == ProcessOp.Thread_Create and ev.process.pid == PID:
                 tids.add(ThreadInfo(ev.details["Thread ID"], ev.process.process_name))
