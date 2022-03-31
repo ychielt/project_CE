@@ -52,7 +52,7 @@ def process_filter(ev: Event):
             tids.add(ThreadInfo(ev.details["Thread ID"], ev.process.process_name))
     elif ev.operation == ProcessOp.Load_Image:
         if ev.process.process_name not in pids.values() and ev.tid in suspicious_threads:
-            summary[Category("Inject DLL into another process through RemoteThread", 8)].append(ev)
+            summary[Category("Inject DLL into another process through RemoteThread", 9)].append(ev)
         if not ev.path.lower().endswith(('dll', 'exe')):
             summary[Category("A file with an unusual extension was attempted to be loaded as a .DLL", 4)].append(ev)
     elif ev.operation == ProcessOp.Process_Create:
@@ -118,7 +118,7 @@ def registry_filter(ev: Event):
         if registry_name.lower().startswith(DETECT_VIRTUAL_MACHINE) or regex_search("(vmware|virtualvbox)", ev.path):
             summary[Category("Detect virtual machine through the presence of a registry key", 8)].append(ev)
         elif registry_name.lower().startswith(SNIFFER):
-            summary[Category("Detect if any sniffer or debugger is installed", 8)].append(ev)
+            summary[Category("Detect if any sniffer or debugger is installed", 6)].append(ev)
     elif ev.operation == Registry.RegSetValue or ev.operation == Registry.RegCreateKey:
         if regex_search("Windows\\\\CurrentVersion\\\\Internet Settings", ev.path):
             summary[Category("Sets or modifies Internet Explorer security zones", 5)].append(ev)
@@ -142,12 +142,12 @@ def registry_filter(ev: Event):
     elif ev.operation == Registry.RegQueryValue or ev.operation == Registry.RegQueryKey:
         if regex_search(PATH_TO_APP_INFO, ev.path):
             summary[Category("Collects information about installed application", 6)].append(ev)
-        elif regex_search("HARDWARE\\\\DESCRIPTION\\\\System\\\\CentralProcessor", ev.path):
-            summary[Category("Checks the CPU name from registry, possibly for anti-virtualization", )].append(ev)
+        elif regex_search("HARDWARE\\\\DESCRIPTION\\\\System\\\\CentralProcessor.*\\\\(Identifier|ProcessorNameString)", ev.path):
+            summary[Category("Checks the CPU name from registry, possibly for anti-virtualization", 0)].append(ev)
     elif ev.operation == Registry.RegDeleteKey:
-        summary[Category("Delete registry key", 4)].append(ev)
+        summary[Category("Delete registry key", 3)].append(ev)
     elif ev.operation == Registry.RegDeleteValue:
-        summary[Category("Delete registry value", 4)].append(ev)
+        summary[Category("Delete registry value", 1)].append(ev)
 
 
 def start_parsing(pml_reader, pb_win=None, pb=None):
@@ -171,7 +171,7 @@ def start_parsing(pml_reader, pb_win=None, pb=None):
         #print(f'\r{str(tmp)}  ,  {str(i)}', end='')
         i += 1
         if not pids[PID] and ev.process.pid == PID:
-            pids[PID] = ev.process.pid
+            pids[PID] = ev.process.process_name
         if IS_PARTIAL:
             if ev.process.pid == PID:
                 tids.add(ThreadInfo(ev.details["Thread ID"], ev.process.process_name))
@@ -202,7 +202,7 @@ def get_summary(pml_file, proc_name, pid=0, tid=0, parse_rename_details=False, i
     print(len(pml_reader))
     #start_parsing(pml_reader)
     start_action_with_progress_bar(start_parsing, pml_reader)
-    return summary
+    return summary, pids[PID]
 
 
 

@@ -28,16 +28,16 @@ def get_weighted_score(summary):
         color = orange
     else:
         color = red
-    return score, color
+    return color
 
 
 def display_report(summary, pname, pid):
     root = Tk()
-    root.title(f"report for process: '{pname}, {pid}'")
+    root.title(f"report")
     root.geometry('1300x500+250+100')
     o = ScrollFrame(root)
-    score, color = get_weighted_score(summary)
-    ttk.Label(o.frame, text=f'Weighted Score:  {score}', background=color, width=20).pack(fill="x", expand=1, pady=0, anchor="n")
+    color = get_weighted_score(summary)
+    ttk.Label(o.frame, text=f'Process:  {pname}', background=color,font=(40), width=20).pack(fill="x", expand=1, pady=0, anchor="n")
     for s in summary.items():
         counter = 0
         title = ToggledFrame(o.frame, text=s[0].title+f'  -  ({str(len(s[1]))}  events)'+' '*450, relief="raised", borderwidth=0)
@@ -134,7 +134,7 @@ def main():
     parser.add_argument("-d", "--parse_rename_details", default=False)
     parser.add_argument("-p", "--partial_flow", default=False)
     args = parser.parse_args()
-    summary = get_summary(args.pml_file,
+    summary, proc_name = get_summary(args.pml_file,
                           args.process_name,
                           args.process_id,
                           args.thread_id,
@@ -143,7 +143,7 @@ def main():
 
     #summary = get_summary("dll_inject_py.PML", False)
     #report_to_json(summary)
-    display_report(summary, args.process_name, args.process_id)
+    display_report(summary, proc_name, args.process_id)
 
 
 if __name__ == '__main__':
