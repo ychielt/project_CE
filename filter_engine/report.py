@@ -21,13 +21,13 @@ def display_report(summary, pname, pid):
     o = ScrollFrame(root)
     for s in summary.items():
         counter = 0
-        title = ToggledFrame(o.frame, text=s[0]+f'  -  ({len(s[1])}  events)'+' '*550, relief="raised", borderwidth=0)
+        title = ToggledFrame(o.frame, text=s[0].title+f'  -  ({len(s[1])}  events)'+' '*550, relief="raised", borderwidth=0)
         title.pack(fill="x", expand=1, pady=2, padx=0, anchor="n")
         for ev in s[1]:
             if counter >= MAX_DISPLAYED_EVENTS:
                 break
             counter += 1
-            event = ToggledFrame(title.sub_frame, text=ev.process.process_name+',  '+str(ev.process.pid)+',  ('+str(ev.num)+')', relief="raised", borderwidth=0)
+            event = ToggledFrame(title.sub_frame, text=ev.process.process_name+',  '+str(ev.process.pid), relief="raised", borderwidth=0)
             event.pack(fill="x", expand=1, pady=0, anchor="n")
             Item('path', ev.path, event.sub_frame).pack(fill='x', side='top')   # path
             Item('details', orderDict_tostring(ev.details), event.sub_frame).pack(fill='x', side='top') # details
@@ -55,7 +55,7 @@ def report_to_json(summary):
     f = open("test.json", 'w')
     summary_j = {}
     for s in summary.items():
-        title_name = s[0]+f'  -  ({len(s[1])}  events)'
+        title_name = s[0].title+f'  -  ({len(s[1])}  events)'
         for ev in s[1]:
             event_name = ev.process.process_name+',  '+str(ev.process.pid)
             summary_j[title_name] = {event_name:{}}

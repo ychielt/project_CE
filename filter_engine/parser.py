@@ -25,6 +25,10 @@ created_files = []
 summary = defaultdict(list)
 
 
+def regex_search(regex, msg):
+    return re.search(regex, msg, re.IGNORECASE)
+
+
 def is_relevant(i: Event):
     if i.process.pid in pids.keys() or i.tid in tids or i.tid in suspicious_threads:
         return True
@@ -47,22 +51,22 @@ def process_filter(ev: Event):
             tids.add(ThreadInfo(ev.details["Thread ID"], ev.process.process_name))
     elif ev.operation == ProcessOp.Load_Image:
         if ev.process.process_name not in pids.values() and ev.tid in suspicious_threads:
-            summary[Category("Inject DLL into another process through RemoteThread")].append(ev)
+            summary[Category("Inject DLL into another process through RemoteThread", 8)].append(ev)
         if not ev.path.endswith('dll'):
-            summary[Category("A file with an unusual extension was attempted to be loaded as a .DLL")].append(ev)
+            summary[Category("A file with an unusual extension was attempted to be loaded as a .DLL", 4)].append(ev)
     elif ev.operation == ProcessOp.Process_Create:
-        summary[Category("Create new Process")].append(ev)
+        summary[Category("Create new Process", 1)].append(ev)
         if "Command line" in ev.details:
-            if re.search("attrib|vssadmin|icacls|cmd\.exe|powershell\.exe", ev.details["Command line"]):
+            if regex_search("reg add|attrib|vssadmin|icacls|cmd\.exe|powershell\.exe", ev.details["Command line"]):
                 summary["Uses suspicious Command line tools or Windows utilities"].append(ev)
-            elif re.search("schtasks", ev.details["Command line"]) and re.search("/create", ev.details["Command line"]):
-                if re.search("regsvr32", ev.details["Command line"]):
-                    summary[Category("Write Itself for autorun at Windows startup")].append(ev)
+            elif regex_search("schtasks", ev.details["Command line"]) and regex_search("/create", ev.details["Command line"]):
+                if regex_search("regsvr32", ev.details["Command line"]):
+                    summary[Category("Write Itself for autorun at Windows startup", 4)].append(ev)
                 else:
-                    summary[Category("One or more non-safelisted processes were created")].append(ev)
+                    summary[Category("One or more non-safelisted processes were created", 3)].append(ev)
 
-        elif re.search("vssadmin delete shadows", ev.process.command_line, re.IGNORECASE):
-            summary[Category("Removes the Shadow Copy to avoid recovery of the system")].append(ev)
+        elif regex_search("vssadmin delete shadows", ev.process.command_line):
+            summary[Category("Removes the Shadow Copy to avoid recovery of the system", 9)].append(ev)
         process_name = ev.path.split('\\')[-1]
         pids[ev.details["PID"]] = process_name
         created_process.append(ev)
@@ -72,75 +76,77 @@ def file_system_filter(ev: Event):
     if ev.operation not in file_system_operation:
         return
     if ev.operation == FilSystem.WriteFile:
-        if re.search(EXECUTABLE_FILES_EXTENTIONS, ev.path, re.IGNORECASE):
-            summary[Category("Create an executable file")].append(ev)
+        if regex_search(EXECUTABLE_FILES_EXTENTIONS, ev.path):
+            summary[Category("Create an executable file", 5)].append(ev)
             created_files.append(str(ev.path).split("/")[-1])
-            if re.search("\.lnk", ev.path, re.IGNORECASE):
-                summary[Category("Create a shortcut to an executable file")].append(ev)
-        elif re.search(STARTUP_FOLDER_PATH, ev.path, re.IGNORECASE):
-            summary[Category("Write Itself for autorun at Windows startup")].append(ev)
+            if regex_search("\.lnk", ev.path):
+                summary[Category("Create a shortcut to an executable file", 2)].append(ev)
+        elif regex_search(STARTUP_FOLDER_PATH, ev.path):
+            summary[Category("Write Itself for autorun at Windows startup", 4)].append(ev)
         elif ev.path.lower().endswith((".crt",".pem",".cer")):
-            summary[Category("Attempts to create or modify system certificates")].append(ev)
-        elif re.search(OFFICE_FILE_EXTENTIONS, ev.path, re.IGNORECASE):
-            summary[Category("Creates office documents on filesystem ")].append(ev)
+            summary[Category("Attempts to create or modify system certificates", 7)].append(ev)
+        elif regex_search(OFFICE_FILE_EXTENTIONS, ev.path):
+            summary[Category("Creates office documents on filesystem ", 2)].append(ev)
     elif ev.operation == FilSystem.CreateFile:
         if ev.path.split("\\")[-1].lower().startswith(DETECT_VIRTUAL_MACHINE):
-            summary[Category("Detect virtual machine through installed driver")].append(ev)
-        elif re.search(STARTUP_FOLDER_PATH, ev.path, re.IGNORECASE):
-            summary[Category("Engaging in startup folder")].append(ev)
-        elif "Command line" in ev.details and re.search("vssadmin delete shadows", ev.details["Command line"]):
-            summary[Category("Uses suspicious command line tools or Windows utilities")].append(ev)
-        elif re.search("\\\\avast|kaspersky|mcafee|antivirus", ev.path, re.IGNORECASE):
-            summary[Category("Attempts to identify installed AV products by installation directory")].append(ev)
+            summary[Category("Detect virtual machine through installed driver", 6)].append(ev)
+        elif regex_search(STARTUP_FOLDER_PATH, ev.path):
+            summary[Category("Engaging in startup folder", 3)].append(ev)
+        elif "Command line" in ev.details and regex_search("vssadmin delete shadows", ev.details["Command line"]):
+            summary[Category("Removes the Shadow Copy to avoid recovery of the system", 9)].append(ev)
+        elif regex_search("\\\\avast|kaspersky|mcafee|antivirus", ev.path):
+            summary[Category("Attempts to identify installed AV products by installation directory", 7)].append(ev)
     elif ev.operation == FilSystem.SetRenameInformationFile:
         if "FileName" in ev.details.keys():
-            if re.search(EXECUTABLE_FILES_EXTENTIONS, ev.details["FileName"], re.IGNORECASE):
+            if regex_search(EXECUTABLE_FILES_EXTENTIONS+'$', ev.details["FileName"]):
                 created_files.append(str(ev.path).split("/")[-1])
-        summary[Category("Change the file name")].append(ev)
+                summary[Category("Change file name extension to an executable file", 6)].append(ev)
+            else:
+                summary[Category("Change the file name", 1)].append(ev)
     elif ev.operation == FilSystem.SetBasicInformationFile:
-        summary[Category("Change the file basic information ")].append(ev)
+        summary[Category("Change the file basic information", 4)].append(ev)
 
 
 def registry_filter(ev: Event):
     if ev.operation not in registry_operation:
         return
     if ev.operation == Registry.RegOpenKey:
-        if re.search(PATH_TO_APP_INFO, ev.path, re.IGNORECASE):
-            summary[Category("Query for potentially installed applications")].append(ev)
+        if regex_search(PATH_TO_APP_INFO, ev.path):
+            summary[Category("Query for potentially installed applications", 4)].append(ev)
         registry_name = str(ev.path).split("\\")[-1]
-        if registry_name.lower().startswith(DETECT_VIRTUAL_MACHINE) or re.search("(vmware|virtualvbox)", ev.path, re.IGNORECASE):
-            summary[Category("Detect virtual machine through the presence of a registry key")].append(ev)
+        if registry_name.lower().startswith(DETECT_VIRTUAL_MACHINE) or regex_search("(vmware|virtualvbox)", ev.path):
+            summary[Category("Detect virtual machine through the presence of a registry key", 8)].append(ev)
         elif registry_name.lower().startswith(SNIFFER):
-            summary[Category("Detect if any sniffer or debugger is installed")].append(ev)
+            summary[Category("Detect if any sniffer or debugger is installed", 8)].append(ev)
     elif ev.operation == Registry.RegSetValue or ev.operation == Registry.RegCreateKey:
-        if re.search("Windows\\\\CurrentVersion\\\\Internet Settings", ev.path, re.IGNORECASE):
-            summary[Category("Sets or modifies Internet Explorer security zones")].append(ev)
-        # if re.search("CurrentVersion\\\\Internet Settings\\\\Wpad", ev.path, re.IGNORECASE):
+        if regex_search("Windows\\\\CurrentVersion\\\\Internet Settings", ev.path):
+            summary[Category("Sets or modifies Internet Explorer security zones", 5)].append(ev)
+        # if regex_search("CurrentVersion\\\\Internet Settings\\\\Wpad", ev.path):
         #     summary["Sets or modifies Wpad proxy auto configuration file for traffic interception"].append(ev)
-        elif re.search("SystemCertificates\\\\AuthRoot\\\\Certificates", ev.path, re.IGNORECASE):
-            summary[Category("Attempts to create or modify system certificates")].append(ev)
-        # elif re.search(BACKGROUND_REG_PATH, ev.path, re.IGNORECASE):
+        elif regex_search("SystemCertificates\\\\AuthRoot\\\\Certificates", ev.path):
+            summary[Category("Attempts to create or modify system certificates", 7)].append(ev)
+        # elif regex_search(BACKGROUND_REG_PATH, ev.path):
         #     summary[Category("Modify desktop wallpaper")].append(ev)
-        elif re.search(BACKGROUND_REG_PATH, ev.path) and re.search("Wallpaper", ev.path, re.IGNORECASE):
-            summary[Category("Modify desktop wallpaper setting")].append(ev)
-        elif re.search("CurrentVersion\\\\Windows\\\\LoadAppInit_DLLs", ev.path, re.IGNORECASE) and "Data" in ev.details and ev.details["Data"] != 0:
-            summary[Category("Enable user32.dll to load all DLL's list from registry - High risk for DLL-injection")].append(ev)
-        elif re.search("(CurrentVersion\\\\Windows\\\\AppInit_DLLs|Control\\\\Session Manager\\\\AppCertDLLs)", ev.path, re.IGNORECASE):
-            summary[Category("Adding a DLL to be loaded persistently for most process in the system")].append(ev)
+        elif regex_search(BACKGROUND_REG_PATH, ev.path) and regex_search("Wallpaper", ev.path):
+            summary[Category("Modify desktop wallpaper setting", 4)].append(ev)
+        elif regex_search("CurrentVersion\\\\Windows\\\\LoadAppInit_DLLs", ev.path) and "Data" in ev.details and ev.details["Data"] != 0:
+            summary[Category("Enable user32.dll to load all DLL's list from registry - High risk for DLL-injection", 7)].append(ev)
+        elif regex_search("(CurrentVersion\\\\Windows\\\\AppInit_DLLs|Control\\\\Session Manager\\\\AppCertDLLs)", ev.path):
+            summary[Category("Adding a DLL to be loaded persistently for most process in the system", 8)].append(ev)
         else:
             for path in autoruns_paths:
-                if re.search(path, ev.path, re.IGNORECASE):
-                    summary[Category("Write Itself for autorun at Windows startup")].append(ev)
+                if regex_search(path, ev.path):
+                    summary[Category("Write Itself for autorun at Windows startup", 4)].append(ev)
                     break
     elif ev.operation == Registry.RegQueryValue or ev.operation == Registry.RegQueryKey:
-        if re.search(PATH_TO_APP_INFO, ev.path, re.IGNORECASE):
-            summary[Category("Collects information about installed application")].append(ev)
-        elif re.search("HARDWARE\\\\DESCRIPTION\\\\System\\\\CentralProcessor", ev.path, re.IGNORECASE):
-            summary["Checks the CPU name from registry, possibly for anti-virtualization"].append(ev)
+        if regex_search(PATH_TO_APP_INFO, ev.path):
+            summary[Category("Collects information about installed application", 6)].append(ev)
+        elif regex_search("HARDWARE\\\\DESCRIPTION\\\\System\\\\CentralProcessor", ev.path):
+            summary[Category("Checks the CPU name from registry, possibly for anti-virtualization", )].append(ev)
     elif ev.operation == Registry.RegDeleteKey:
-        summary[Category("Delete registry key")].append(ev)
+        summary[Category("Delete registry key", 4)].append(ev)
     elif ev.operation == Registry.RegDeleteValue:
-        summary[Category("Delete registry value")].append(ev)
+        summary[Category("Delete registry value", 4)].append(ev)
 
 
 def start_parsing(pml_reader, pb_win=None, pb=None):
@@ -189,8 +195,8 @@ def get_summary(pml_file, proc_name, pid=0, tid=0, parse_rename_details=False, i
     f = open(pml_file, "rb")
     pml_reader = ProcmonLogsReader(f)
     print(len(pml_reader))
-    start_parsing(pml_reader)
-    #start_action_with_progress_bar(start_parsing, pml_reader)
+    #start_parsing(pml_reader)
+    start_action_with_progress_bar(start_parsing, pml_reader)
     return summary
 
 

@@ -15,7 +15,6 @@
 #     else:
 #         print(item[1].__dict__)
 import re
-a={"a":1}
-b={"a":1}
-print(a==b)
+EXECUTABLE_FILES_EXTENTIONS = "(\.exe|\.dll|\.bat|\.vbs|\.pyc|\.py|\.js|\.lnk|\.cmd)"
+print(re.search(EXECUTABLE_FILES_EXTENTIONS + '$', "fjvnmfr.exe"))
 
