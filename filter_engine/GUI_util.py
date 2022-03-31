@@ -5,7 +5,7 @@ from tkinter import *
 from tkinter.ttk import Progressbar
 
 
-PROGRESS_BAR_LENGTH = 1000
+PROGRESS_BAR_LENGTH = 300
 
 
 class Item(tk.Frame):
@@ -109,7 +109,7 @@ def start_action_with_progress_bar(func, *args):
     pb_window.geometry('400x250+500+200')
 
     progress_bar = Progressbar(pb_window, orient=HORIZONTAL, length=PROGRESS_BAR_LENGTH, mode='determinate')
-    progress_bar.pack(expand=True, padx=30)
+    progress_bar.pack(expand=True)
     action = partial(func, *args, pb_window, progress_bar)
     Button(pb_window, text='Start', command=action, width=15).pack(side=LEFT, padx=(50, 0), pady=(0,15))
     Button(pb_window, text='close', command=pb_window.destroy, width=15).pack(side=RIGHT, padx=(0,50), pady=(0,15))

@@ -156,16 +156,19 @@ def start_parsing(pml_reader, pb_win=None, pb=None):
                EventClass.Network: network_filter}
     ev: Event
     i = 0
-    pb_step = PROGRESS_BAR_LENGTH/len(pml_reader)
+    pb_step = 100/len(pml_reader)
+    print(len(pml_reader))
+    print(pb_step)
+    tmp =0
     for ev in pml_reader:
-        if i == 2434137:
-            print()
+        time.sleep(0.3)
         if pb_win and pb:
             pb_win.update_idletasks()
             pb['value'] += pb_step
+            tmp += pb_step
             text = tk.StringVar()
             text.set("Test")
-        print('\r' + str(i), end='')
+        print(f'\r{str(tmp)}  ,  {str(i)}', end='')
         i += 1
         if IS_PARTIAL:
             if ev.process.pid == PID:
