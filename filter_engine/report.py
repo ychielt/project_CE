@@ -145,8 +145,8 @@ def main():
     parser.add_argument("-pn", "--process_name", required=False)
     parser.add_argument("-pid", "--process_id", required=True)
     parser.add_argument("-tid", "--thread_id", default=0)
-    parser.add_argument("-d", "--parse_rename_details", default=False)
-    parser.add_argument("-p", "--partial_flow", default=False)
+    parser.add_argument("-d", "--parse_rename_details", action='store_true')
+    parser.add_argument("-p", "--partial_flow", action='store_true')
     args = parser.parse_args()
     summary, proc_name = get_summary(args.pml_file,
                           args.process_name,
