@@ -19,15 +19,21 @@ def get_weighted_score(summary):
     for item in summary.items():
         if item[0].score > score:
             score = item[0].score
-    green = '#99ff99'
-    orange = '#ffe680'
-    red = '#ff8080'
-    if score < 1:
-        color = green
-    elif score < 5:
-        color = orange
+    level1 = '#99ff99'
+    level2 = '#ffff99'
+    level3 = '#ffe680'
+    level4 = '#ff8080'
+    level5 = '#ff0000'
+    if score <= 1:
+        color = level1
+    elif score <= 3:
+        color = level2
+    elif score <= 5:
+        color = level3
+    elif score <= 7:
+        color = level4
     else:
-        color = red
+        color = level5
     return color
 
 
@@ -103,6 +109,14 @@ def is_event_in(ev, l):
     return False
 
 
+def compare_details(d1, d2):
+    if "Command line" in d1 and "Command line" in d2 :
+        return d1["Command line"] == d2["Command line"]
+    if "FileName" in d1 and "FileName" in d2:
+        return d1["FileName"] == d2["FileName"]
+    return True
+
+
 def unique_summary(summary: dict):
     for item in summary.items():
         tmp = []
@@ -113,7 +127,7 @@ def unique_summary(summary: dict):
                 if ev.process.pid == i.process.pid \
                         and ev.process.command_line == i.process.command_line \
                         and ev.path == i.path \
-                        and orderDict_tostring(ev.details) == orderDict_tostring(i.details)\
+                        and compare_details(ev.details, i.details)\
                         and ev.result == i.result \
                         and ev.operation == i.operation:
                     i.num += 1
@@ -143,7 +157,7 @@ def main():
 
     #summary = get_summary("dll_inject_py.PML", False)
     #report_to_json(summary)
-    display_report(summary, proc_name, args.process_id)
+    display_report(unique_summary(summary), proc_name, args.process_id)
 
 
 if __name__ == '__main__':

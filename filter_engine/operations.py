@@ -18,12 +18,10 @@ class FilSystem:
 
 class Network:
     Connect = NetworkOperation.Connect.name
-    Disconnect = NetworkOperation.Disconnect.name
     Reconnect = NetworkOperation.Reconnect.name
     Accept = NetworkOperation.Accept.name
     Send = NetworkOperation.Send.name
     Receive = NetworkOperation.Receive.name
-    TCPCopy = NetworkOperation.TCPCopy.name
 
 
 class Registry:
