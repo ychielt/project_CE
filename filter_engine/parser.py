@@ -38,7 +38,8 @@ def is_relevant(i: Event):
 def network_filter(ev: Event):
     if ev.operation not in network_operation:
         return
-    summary[ev.operation].append(ev)
+    # to do
+    # summary[Category("Open socket"), 2].append(ev)
 
 
 def process_filter(ev: Event):
@@ -52,13 +53,13 @@ def process_filter(ev: Event):
     elif ev.operation == ProcessOp.Load_Image:
         if ev.process.process_name not in pids.values() and ev.tid in suspicious_threads:
             summary[Category("Inject DLL into another process through RemoteThread", 8)].append(ev)
-        if not ev.path.endswith('dll'):
+        if not ev.path.lower().endswith(('dll', 'exe')):
             summary[Category("A file with an unusual extension was attempted to be loaded as a .DLL", 4)].append(ev)
     elif ev.operation == ProcessOp.Process_Create:
         summary[Category("Create new Process", 1)].append(ev)
         if "Command line" in ev.details:
             if regex_search("reg add|attrib|vssadmin|icacls|cmd\.exe|powershell\.exe", ev.details["Command line"]):
-                summary["Uses suspicious Command line tools or Windows utilities"].append(ev)
+                summary[Category("Uses suspicious Command line tools or Windows utilities", 5)].append(ev)
             elif regex_search("schtasks", ev.details["Command line"]) and regex_search("/create", ev.details["Command line"]):
                 if regex_search("regsvr32", ev.details["Command line"]):
                     summary[Category("Write Itself for autorun at Windows startup", 4)].append(ev)
@@ -161,7 +162,6 @@ def start_parsing(pml_reader, pb_win=None, pb=None):
     print(pb_step)
     tmp =0
     for ev in pml_reader:
-        time.sleep(0.3)
         if pb_win and pb:
             pb_win.update_idletasks()
             pb['value'] += pb_step

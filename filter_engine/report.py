@@ -21,7 +21,7 @@ def display_report(summary, pname, pid):
     o = ScrollFrame(root)
     for s in summary.items():
         counter = 0
-        title = ToggledFrame(o.frame, text=s[0].title+f'  -  ({len(s[1])}  events)'+' '*550, relief="raised", borderwidth=0)
+        title = ToggledFrame(o.frame, text=s[0].title+f'  -  ({str(len(s[1]))}  events)'+' '*450, relief="raised", borderwidth=0)
         title.pack(fill="x", expand=1, pady=2, padx=0, anchor="n")
         for ev in s[1]:
             if counter >= MAX_DISPLAYED_EVENTS:

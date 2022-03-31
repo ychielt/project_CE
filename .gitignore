@@ -4,3 +4,4 @@ filter_engine/__pycache__
 filter_engine/test.py
 procmon_parser/__pycache__/logs.cpython-39.pyc
 presentation.pptx
+ procmon_parser/__pycache__/*
