@@ -17,3 +17,12 @@ class ThreadInfo:
 
     def __hash__(self):
         return self.tid
+
+
+class Category:
+    def __init__(self, title, score):
+        self.title = title
+        self.score = score
+
+    def __hash__(self):
+        return self.title
