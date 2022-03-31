@@ -14,11 +14,30 @@ def orderDict_tostring(d):
     return s[:-1]
 
 
+def get_weighted_score(summary):
+    score = 0
+    for item in summary.items():
+        if item[0].score > score:
+            score = item[0].score
+    green = '#99ff99'
+    orange = '#ffe680'
+    red = '#ff8080'
+    if score < 1:
+        color = green
+    elif score < 5:
+        color = orange
+    else:
+        color = red
+    return score, color
+
+
 def display_report(summary, pname, pid):
     root = Tk()
     root.title(f"report for process: '{pname}, {pid}'")
     root.geometry('1300x500+250+100')
     o = ScrollFrame(root)
+    score, color = get_weighted_score(summary)
+    ttk.Label(o.frame, text=f'Weighted Score:  {score}', background=color, width=20).pack(fill="x", expand=1, pady=0, anchor="n")
     for s in summary.items():
         counter = 0
         title = ToggledFrame(o.frame, text=s[0].title+f'  -  ({len(s[1])}  events)'+' '*550, relief="raised", borderwidth=0)
@@ -109,7 +128,7 @@ def unique_summary(summary: dict):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("pml_file")
-    parser.add_argument("-pn", "--process_name", required=True)
+    parser.add_argument("-pn", "--process_name", required=False)
     parser.add_argument("-pid", "--process_id", required=True)
     parser.add_argument("-tid", "--thread_id", default=0)
     parser.add_argument("-d", "--parse_rename_details", default=False)

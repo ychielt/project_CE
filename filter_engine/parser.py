@@ -161,15 +161,16 @@ def start_parsing(pml_reader, pb_win=None, pb=None):
     print(pb_step)
     tmp =0
     for ev in pml_reader:
-        time.sleep(0.3)
         if pb_win and pb:
             pb_win.update_idletasks()
             pb['value'] += pb_step
             tmp += pb_step
             text = tk.StringVar()
             text.set("Test")
-        print(f'\r{str(tmp)}  ,  {str(i)}', end='')
+        #print(f'\r{str(tmp)}  ,  {str(i)}', end='')
         i += 1
+        if not pids[PID] and ev.process.pid == PID:
+            pids[PID] = ev.process.pid
         if IS_PARTIAL:
             if ev.process.pid == PID:
                 tids.add(ThreadInfo(ev.details["Thread ID"], ev.process.process_name))
