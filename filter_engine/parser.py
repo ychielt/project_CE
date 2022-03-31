@@ -51,14 +51,15 @@ def process_filter(ev: Event):
         if not ev.path.endswith('dll'):
             summary["A file with an unusual extension was attempted to be loaded as a .DLL"].append(ev)
     elif ev.operation == ProcessOp.Process_Create:
+        summary["Create new Process"].append(ev)
         if "Command line" in ev.details:
-            if re.search("attrib|vssadmin|icacls", ev.details["Command line"]):
+            if re.search("attrib|vssadmin|icacls|cmd\.exe|powershell\.exe", ev.details["Command line"]):
                 summary["Uses suspicious Command line tools or Windows utilities"].append(ev)
-            elif re.search("schtasks /create", ev.details["Command line"]):
+            elif re.search("schtasks", ev.details["Command line"]) and re.search("/create", ev.details["Command line"]):
                 if re.search("regsvr32", ev.details["Command line"]):
                     summary["Write Itself for autorun at Windows startup"].append(ev)
                 else:
-                    summary["One or more non-safelisted processes were created"].append(ev)
+                    summary["One or more non-safe listed processes were created"].append(ev)
         elif re.search("vssadmin delete shadows", ev.process.command_line, re.IGNORECASE):
             summary["Removes the Shadow Copy to avoid recovery of the system"].append(ev)
         process_name = ev.path.split('\\')[-1]
@@ -71,13 +72,13 @@ def file_system_filter(ev: Event):
         return
     if ev.operation == FilSystem.WriteFile:
         if re.search(EXECUTABLE_FILES_EXTENTIONS, ev.path, re.IGNORECASE):
-            summary[FilSystem.WriteFile].append(ev)
+            summary["Create an executable fie"].append(ev)
             created_files.append(str(ev.path).split("/")[-1])
             if re.search("\.lnk", ev.path, re.IGNORECASE):
                 summary["Create a shortcut to an executable file"].append(ev)
         elif re.search(STARTUP_FOLDER_PATH, ev.path, re.IGNORECASE):
             summary["Write Itself for autorun at Windows startup"].append(ev)
-        elif ev.path.lower().endswith((".crt",".pem",".cer")):
+        elif ev.path.lower().endswith((".crt", ".pem", ".cer")):
             summary["Attempts to create or modify system certificates"].append(ev)
         elif re.search(OFFICE_FILE_EXTENTIONS, ev.path, re.IGNORECASE):
             summary["Creates office documents on filesystem "].append(ev)
@@ -88,13 +89,15 @@ def file_system_filter(ev: Event):
             summary["Engaging in startup folder"].append(ev)
         elif "Command line" in ev.details and re.search("vssadmin delete shadows", ev.details["Command line"]):
             summary["Uses suspicious command line tools or Windows utilities"].append(ev)
+        elif re.search("\\\\avast|kaspersky|mcafee|antivirus", ev.path, re.IGNORECASE):
+            summary["Attempts to identify installed AV products by installation directory"].append(ev)
     elif ev.operation == FilSystem.SetRenameInformationFile:
         if "FileName" in ev.details.keys():
             if re.search(EXECUTABLE_FILES_EXTENTIONS, ev.details["FileName"], re.IGNORECASE):
                 created_files.append(str(ev.path).split("/")[-1])
-        summary[FilSystem.SetRenameInformationFile].append(ev)
+        summary["Change the file name"].append(ev)
     elif ev.operation == FilSystem.SetBasicInformationFile:
-        summary[FilSystem.SetBasicInformationFile].append(ev)
+        summary["Change the file basic information "].append(ev)
 
 
 def registry_filter(ev: Event):
@@ -131,10 +134,12 @@ def registry_filter(ev: Event):
     elif ev.operation == Registry.RegQueryValue or ev.operation == Registry.RegQueryKey:
         if re.search(PATH_TO_APP_INFO, ev.path, re.IGNORECASE):
             summary["Collects information about installed application"].append(ev)
+        elif re.search("HARDWARE\\\\DESCRIPTION\\\\System\\\\CentralProcessor", ev.path, re.IGNORECASE):
+            summary["Checks the CPU name from registry, possibly for anti-virtualization"].append(ev)
     elif ev.operation == Registry.RegDeleteKey:
-        summary[Registry.RegDeleteKey].append(ev)
+        summary["Delete registry key"].append(ev)
     elif ev.operation == Registry.RegDeleteValue:
-        summary[Registry.RegDeleteValue].append(ev)
+        summary["Delete registry value"].append(ev)
     elif ev.operation == Registry.RegSetInfoKey:
         # to do ???
         pass
