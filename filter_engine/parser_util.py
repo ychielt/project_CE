@@ -27,6 +27,10 @@ class Category:
     def __hash__(self):
         return hash(self.title)
 
+    def __eq__(self, other):
+        if type(self) == type(other):
+            return self.title == other.title
+
     def __str__(self):
         return self.title
 
