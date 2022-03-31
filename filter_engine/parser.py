@@ -117,6 +117,9 @@ def registry_filter(ev: Event):
         registry_name = str(ev.path).split("\\")[-1]
         if registry_name.lower().startswith(DETECT_VIRTUAL_MACHINE) or regex_search("(vmware|virtualvbox)", ev.path):
             summary[Category("Detect virtual machine through the presence of a registry key", 6)].append(ev)
+        elif registry_name.lower().startswith("vm"):
+            if registry_name.lower().startswith(DETECT_VMWARE):
+                summary[Category("Detect virtual machine through the presence of a registry key", 6)].append(ev)
         elif registry_name.lower().startswith(SNIFFER):
             summary[Category("Detect if any sniffer or debugger is installed", 6)].append(ev)
     elif ev.operation == Registry.RegSetValue or ev.operation == Registry.RegCreateKey:

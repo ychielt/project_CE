@@ -1,4 +1,6 @@
-DETECT_VIRTUAL_MACHINE = ("vm", "vbox", "sandbox", "agent.pyw", "analyzer.py")
+DETECT_VIRTUAL_MACHINE = ("vbox", "sandbox", "agent.pyw", "analyzer.py")
+DETECT_VMWARE = ("Vmmouse.sys", "vm3dgl.dll", "vmdum.dll", "vm3dver.dll", "vmtray.dll", "VMToolsHook.dll",
+                 "vmmousever.dll", "vmhgfs.dll", "vmGuestLib.dll", "VmGuestLibJava.dll", "vmhgfs.dll")
 SNIFFER = ("sandbox", "wireshark", "procexec", "sniffer", "debugging", "superantispyware", "bopup observer")
 file = open("autoruns_paths.txt", 'r')
 autoruns_paths = file.readlines()

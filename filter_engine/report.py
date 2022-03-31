@@ -52,7 +52,7 @@ def display_report(summary, pname, pid):
             if counter >= MAX_DISPLAYED_EVENTS:
                 break
             counter += 1
-            event = ToggledFrame(title.sub_frame, text=ev.process.process_name+',  '+str(ev.process.pid), relief="raised", borderwidth=0)
+            event = ToggledFrame(title.sub_frame, text=f'{ev.process.process_name},  {str(ev.process.pid)},  ({ev.num})', relief="raised", borderwidth=0)
             event.pack(fill="x", expand=1, pady=0, anchor="n")
             Item('path', ev.path, event.sub_frame).pack(fill='x', side='top')   # path
             Item('details', orderDict_tostring(ev.details), event.sub_frame).pack(fill='x', side='top') # details
